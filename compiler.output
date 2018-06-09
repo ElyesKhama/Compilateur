@@ -1,0 +1,996 @@
+Terminaux inutilisés dans la grammaire
+
+   CONST
+   LIGN
+   STRING_PRINTF
+   FLOAT_PRINTF
+   VOID
+   RETURN
+
+
+Grammaire
+
+    0 $accept: main $end
+
+    1 main: INT MAIN OP CP body
+
+    2 body_main: instruction body_main
+    3          | %empty
+
+    4 instruction: declaration
+    5            | affectation
+    6            | printf
+    7            | ifElse
+    8            | while
+
+    9 declaration: INT NOM PV
+   10            | INT NOM VIR decSuite
+   11            | INT NOM EGALE expression PV
+
+   12 decSuite: NOM VIR decSuite
+   13         | NOM PV
+
+   14 affectation: NOM EGALE expression PV
+
+   15 expression: expression PLUS expression
+   16           | expression MOINS expression
+   17           | expression MUL expression
+   18           | expression DIV expression
+   19           | NOM
+   20           | NB
+   21           | OP expression CP
+
+   22 printf: PRINTF OP body_printf CP PV
+
+   23 body_printf: QUOTE STR QUOTE
+   24            | QUOTE INT_PRINTF QUOTE VIR NB
+   25            | NOM
+
+   26 $@1: %empty
+
+   27 body: OA $@1 body_main CA
+
+   28 ifAction: %empty
+
+   29 ifElse: IF OP test CP ifAction body
+
+   30 $@2: %empty
+
+   31 ifElse: IF OP test CP ifAction body ELSE $@2 body
+
+   32 test: NOM
+   33     | NB
+   34     | test EGALE EGALE test
+   35     | test SUP test
+   36     | test INF test
+   37     | test SUP EGALE test
+   38     | test INF EGALE test
+
+   39 @3: %empty
+
+   40 $@4: %empty
+
+   41 while: WHILE @3 OP test CP $@4 body
+
+
+Terminaux, suivis des règles où ils apparaissent
+
+$end (0) 0
+error (256)
+IF (258) 29 31
+WHILE (259) 41
+ELSE (260) 31
+PRINTF (261) 22
+MAIN (262) 1
+OA (263) 27
+CA (264) 27
+CONST (265)
+INT (266) 1 9 10 11
+NOM (267) 9 10 11 12 13 14 19 25 32
+PLUS (268) 15
+MOINS (269) 16
+MUL (270) 17
+DIV (271) 18
+EGALE (272) 11 14 34 37 38
+OP (273) 1 21 22 29 31 41
+CP (274) 1 21 22 29 31 41
+LIGN (275)
+PV (276) 9 11 13 14 22
+QUOTE (277) 23 24
+INT_PRINTF (278) 24
+STRING_PRINTF (279)
+FLOAT_PRINTF (280)
+VIR (281) 10 12 24
+NB (282) 20 24 33
+STR (283) 23
+INF (284) 36 38
+SUP (285) 35 37
+VOID (286)
+RETURN (287)
+IFREDUCE (288)
+
+
+Non-terminaux, suivis des règles où ils apparaissent
+
+$accept (34)
+    à gauche: 0
+main (35)
+    à gauche: 1, à droite: 0
+body_main (36)
+    à gauche: 2 3, à droite: 2 27
+instruction (37)
+    à gauche: 4 5 6 7 8, à droite: 2
+declaration (38)
+    à gauche: 9 10 11, à droite: 4
+decSuite (39)
+    à gauche: 12 13, à droite: 10 12
+affectation (40)
+    à gauche: 14, à droite: 5
+expression (41)
+    à gauche: 15 16 17 18 19 20 21, à droite: 11 14 15 16 17 18 21
+printf (42)
+    à gauche: 22, à droite: 6
+body_printf (43)
+    à gauche: 23 24 25, à droite: 22
+body (44)
+    à gauche: 27, à droite: 1 29 31 41
+$@1 (45)
+    à gauche: 26, à droite: 27
+ifAction (46)
+    à gauche: 28, à droite: 29 31
+ifElse (47)
+    à gauche: 29 31, à droite: 7
+$@2 (48)
+    à gauche: 30, à droite: 31
+test (49)
+    à gauche: 32 33 34 35 36 37 38, à droite: 29 31 34 35 36 37 38
+    41
+while (50)
+    à gauche: 41, à droite: 8
+@3 (51)
+    à gauche: 39, à droite: 41
+$@4 (52)
+    à gauche: 40, à droite: 41
+
+
+État 0
+
+    0 $accept: . main $end
+
+    INT  décalage et aller à l'état 1
+
+    main  aller à l'état 2
+
+
+État 1
+
+    1 main: INT . MAIN OP CP body
+
+    MAIN  décalage et aller à l'état 3
+
+
+État 2
+
+    0 $accept: main . $end
+
+    $end  décalage et aller à l'état 4
+
+
+État 3
+
+    1 main: INT MAIN . OP CP body
+
+    OP  décalage et aller à l'état 5
+
+
+État 4
+
+    0 $accept: main $end .
+
+    $défaut  accepter
+
+
+État 5
+
+    1 main: INT MAIN OP . CP body
+
+    CP  décalage et aller à l'état 6
+
+
+État 6
+
+    1 main: INT MAIN OP CP . body
+
+    OA  décalage et aller à l'état 7
+
+    body  aller à l'état 8
+
+
+État 7
+
+   27 body: OA . $@1 body_main CA
+
+    $défaut  réduction par utilisation de la règle 26 ($@1)
+
+    $@1  aller à l'état 9
+
+
+État 8
+
+    1 main: INT MAIN OP CP body .
+
+    $défaut  réduction par utilisation de la règle 1 (main)
+
+
+État 9
+
+   27 body: OA $@1 . body_main CA
+
+    IF      décalage et aller à l'état 10
+    WHILE   décalage et aller à l'état 11
+    PRINTF  décalage et aller à l'état 12
+    INT     décalage et aller à l'état 13
+    NOM     décalage et aller à l'état 14
+
+    $défaut  réduction par utilisation de la règle 3 (body_main)
+
+    body_main    aller à l'état 15
+    instruction  aller à l'état 16
+    declaration  aller à l'état 17
+    affectation  aller à l'état 18
+    printf       aller à l'état 19
+    ifElse       aller à l'état 20
+    while        aller à l'état 21
+
+
+État 10
+
+   29 ifElse: IF . OP test CP ifAction body
+   31       | IF . OP test CP ifAction body ELSE $@2 body
+
+    OP  décalage et aller à l'état 22
+
+
+État 11
+
+   41 while: WHILE . @3 OP test CP $@4 body
+
+    $défaut  réduction par utilisation de la règle 39 (@3)
+
+    @3  aller à l'état 23
+
+
+État 12
+
+   22 printf: PRINTF . OP body_printf CP PV
+
+    OP  décalage et aller à l'état 24
+
+
+État 13
+
+    9 declaration: INT . NOM PV
+   10            | INT . NOM VIR decSuite
+   11            | INT . NOM EGALE expression PV
+
+    NOM  décalage et aller à l'état 25
+
+
+État 14
+
+   14 affectation: NOM . EGALE expression PV
+
+    EGALE  décalage et aller à l'état 26
+
+
+État 15
+
+   27 body: OA $@1 body_main . CA
+
+    CA  décalage et aller à l'état 27
+
+
+État 16
+
+    2 body_main: instruction . body_main
+
+    IF      décalage et aller à l'état 10
+    WHILE   décalage et aller à l'état 11
+    PRINTF  décalage et aller à l'état 12
+    INT     décalage et aller à l'état 13
+    NOM     décalage et aller à l'état 14
+
+    $défaut  réduction par utilisation de la règle 3 (body_main)
+
+    body_main    aller à l'état 28
+    instruction  aller à l'état 16
+    declaration  aller à l'état 17
+    affectation  aller à l'état 18
+    printf       aller à l'état 19
+    ifElse       aller à l'état 20
+    while        aller à l'état 21
+
+
+État 17
+
+    4 instruction: declaration .
+
+    $défaut  réduction par utilisation de la règle 4 (instruction)
+
+
+État 18
+
+    5 instruction: affectation .
+
+    $défaut  réduction par utilisation de la règle 5 (instruction)
+
+
+État 19
+
+    6 instruction: printf .
+
+    $défaut  réduction par utilisation de la règle 6 (instruction)
+
+
+État 20
+
+    7 instruction: ifElse .
+
+    $défaut  réduction par utilisation de la règle 7 (instruction)
+
+
+État 21
+
+    8 instruction: while .
+
+    $défaut  réduction par utilisation de la règle 8 (instruction)
+
+
+État 22
+
+   29 ifElse: IF OP . test CP ifAction body
+   31       | IF OP . test CP ifAction body ELSE $@2 body
+
+    NOM  décalage et aller à l'état 29
+    NB   décalage et aller à l'état 30
+
+    test  aller à l'état 31
+
+
+État 23
+
+   41 while: WHILE @3 . OP test CP $@4 body
+
+    OP  décalage et aller à l'état 32
+
+
+État 24
+
+   22 printf: PRINTF OP . body_printf CP PV
+
+    NOM    décalage et aller à l'état 33
+    QUOTE  décalage et aller à l'état 34
+
+    body_printf  aller à l'état 35
+
+
+État 25
+
+    9 declaration: INT NOM . PV
+   10            | INT NOM . VIR decSuite
+   11            | INT NOM . EGALE expression PV
+
+    EGALE  décalage et aller à l'état 36
+    PV     décalage et aller à l'état 37
+    VIR    décalage et aller à l'état 38
+
+
+État 26
+
+   14 affectation: NOM EGALE . expression PV
+
+    NOM  décalage et aller à l'état 39
+    OP   décalage et aller à l'état 40
+    NB   décalage et aller à l'état 41
+
+    expression  aller à l'état 42
+
+
+État 27
+
+   27 body: OA $@1 body_main CA .
+
+    $défaut  réduction par utilisation de la règle 27 (body)
+
+
+État 28
+
+    2 body_main: instruction body_main .
+
+    $défaut  réduction par utilisation de la règle 2 (body_main)
+
+
+État 29
+
+   32 test: NOM .
+
+    $défaut  réduction par utilisation de la règle 32 (test)
+
+
+État 30
+
+   33 test: NB .
+
+    $défaut  réduction par utilisation de la règle 33 (test)
+
+
+État 31
+
+   29 ifElse: IF OP test . CP ifAction body
+   31       | IF OP test . CP ifAction body ELSE $@2 body
+   34 test: test . EGALE EGALE test
+   35     | test . SUP test
+   36     | test . INF test
+   37     | test . SUP EGALE test
+   38     | test . INF EGALE test
+
+    EGALE  décalage et aller à l'état 43
+    CP     décalage et aller à l'état 44
+    INF    décalage et aller à l'état 45
+    SUP    décalage et aller à l'état 46
+
+
+État 32
+
+   41 while: WHILE @3 OP . test CP $@4 body
+
+    NOM  décalage et aller à l'état 29
+    NB   décalage et aller à l'état 30
+
+    test  aller à l'état 47
+
+
+État 33
+
+   25 body_printf: NOM .
+
+    $défaut  réduction par utilisation de la règle 25 (body_printf)
+
+
+État 34
+
+   23 body_printf: QUOTE . STR QUOTE
+   24            | QUOTE . INT_PRINTF QUOTE VIR NB
+
+    INT_PRINTF  décalage et aller à l'état 48
+    STR         décalage et aller à l'état 49
+
+
+État 35
+
+   22 printf: PRINTF OP body_printf . CP PV
+
+    CP  décalage et aller à l'état 50
+
+
+État 36
+
+   11 declaration: INT NOM EGALE . expression PV
+
+    NOM  décalage et aller à l'état 39
+    OP   décalage et aller à l'état 40
+    NB   décalage et aller à l'état 41
+
+    expression  aller à l'état 51
+
+
+État 37
+
+    9 declaration: INT NOM PV .
+
+    $défaut  réduction par utilisation de la règle 9 (declaration)
+
+
+État 38
+
+   10 declaration: INT NOM VIR . decSuite
+
+    NOM  décalage et aller à l'état 52
+
+    decSuite  aller à l'état 53
+
+
+État 39
+
+   19 expression: NOM .
+
+    $défaut  réduction par utilisation de la règle 19 (expression)
+
+
+État 40
+
+   21 expression: OP . expression CP
+
+    NOM  décalage et aller à l'état 39
+    OP   décalage et aller à l'état 40
+    NB   décalage et aller à l'état 41
+
+    expression  aller à l'état 54
+
+
+État 41
+
+   20 expression: NB .
+
+    $défaut  réduction par utilisation de la règle 20 (expression)
+
+
+État 42
+
+   14 affectation: NOM EGALE expression . PV
+   15 expression: expression . PLUS expression
+   16           | expression . MOINS expression
+   17           | expression . MUL expression
+   18           | expression . DIV expression
+
+    PLUS   décalage et aller à l'état 55
+    MOINS  décalage et aller à l'état 56
+    MUL    décalage et aller à l'état 57
+    DIV    décalage et aller à l'état 58
+    PV     décalage et aller à l'état 59
+
+
+État 43
+
+   34 test: test EGALE . EGALE test
+
+    EGALE  décalage et aller à l'état 60
+
+
+État 44
+
+   29 ifElse: IF OP test CP . ifAction body
+   31       | IF OP test CP . ifAction body ELSE $@2 body
+
+    $défaut  réduction par utilisation de la règle 28 (ifAction)
+
+    ifAction  aller à l'état 61
+
+
+État 45
+
+   36 test: test INF . test
+   38     | test INF . EGALE test
+
+    NOM    décalage et aller à l'état 29
+    EGALE  décalage et aller à l'état 62
+    NB     décalage et aller à l'état 30
+
+    test  aller à l'état 63
+
+
+État 46
+
+   35 test: test SUP . test
+   37     | test SUP . EGALE test
+
+    NOM    décalage et aller à l'état 29
+    EGALE  décalage et aller à l'état 64
+    NB     décalage et aller à l'état 30
+
+    test  aller à l'état 65
+
+
+État 47
+
+   34 test: test . EGALE EGALE test
+   35     | test . SUP test
+   36     | test . INF test
+   37     | test . SUP EGALE test
+   38     | test . INF EGALE test
+   41 while: WHILE @3 OP test . CP $@4 body
+
+    EGALE  décalage et aller à l'état 43
+    CP     décalage et aller à l'état 66
+    INF    décalage et aller à l'état 45
+    SUP    décalage et aller à l'état 46
+
+
+État 48
+
+   24 body_printf: QUOTE INT_PRINTF . QUOTE VIR NB
+
+    QUOTE  décalage et aller à l'état 67
+
+
+État 49
+
+   23 body_printf: QUOTE STR . QUOTE
+
+    QUOTE  décalage et aller à l'état 68
+
+
+État 50
+
+   22 printf: PRINTF OP body_printf CP . PV
+
+    PV  décalage et aller à l'état 69
+
+
+État 51
+
+   11 declaration: INT NOM EGALE expression . PV
+   15 expression: expression . PLUS expression
+   16           | expression . MOINS expression
+   17           | expression . MUL expression
+   18           | expression . DIV expression
+
+    PLUS   décalage et aller à l'état 55
+    MOINS  décalage et aller à l'état 56
+    MUL    décalage et aller à l'état 57
+    DIV    décalage et aller à l'état 58
+    PV     décalage et aller à l'état 70
+
+
+État 52
+
+   12 decSuite: NOM . VIR decSuite
+   13         | NOM . PV
+
+    PV   décalage et aller à l'état 71
+    VIR  décalage et aller à l'état 72
+
+
+État 53
+
+   10 declaration: INT NOM VIR decSuite .
+
+    $défaut  réduction par utilisation de la règle 10 (declaration)
+
+
+État 54
+
+   15 expression: expression . PLUS expression
+   16           | expression . MOINS expression
+   17           | expression . MUL expression
+   18           | expression . DIV expression
+   21           | OP expression . CP
+
+    PLUS   décalage et aller à l'état 55
+    MOINS  décalage et aller à l'état 56
+    MUL    décalage et aller à l'état 57
+    DIV    décalage et aller à l'état 58
+    CP     décalage et aller à l'état 73
+
+
+État 55
+
+   15 expression: expression PLUS . expression
+
+    NOM  décalage et aller à l'état 39
+    OP   décalage et aller à l'état 40
+    NB   décalage et aller à l'état 41
+
+    expression  aller à l'état 74
+
+
+État 56
+
+   16 expression: expression MOINS . expression
+
+    NOM  décalage et aller à l'état 39
+    OP   décalage et aller à l'état 40
+    NB   décalage et aller à l'état 41
+
+    expression  aller à l'état 75
+
+
+État 57
+
+   17 expression: expression MUL . expression
+
+    NOM  décalage et aller à l'état 39
+    OP   décalage et aller à l'état 40
+    NB   décalage et aller à l'état 41
+
+    expression  aller à l'état 76
+
+
+État 58
+
+   18 expression: expression DIV . expression
+
+    NOM  décalage et aller à l'état 39
+    OP   décalage et aller à l'état 40
+    NB   décalage et aller à l'état 41
+
+    expression  aller à l'état 77
+
+
+État 59
+
+   14 affectation: NOM EGALE expression PV .
+
+    $défaut  réduction par utilisation de la règle 14 (affectation)
+
+
+État 60
+
+   34 test: test EGALE EGALE . test
+
+    NOM  décalage et aller à l'état 29
+    NB   décalage et aller à l'état 30
+
+    test  aller à l'état 78
+
+
+État 61
+
+   29 ifElse: IF OP test CP ifAction . body
+   31       | IF OP test CP ifAction . body ELSE $@2 body
+
+    OA  décalage et aller à l'état 7
+
+    body  aller à l'état 79
+
+
+État 62
+
+   38 test: test INF EGALE . test
+
+    NOM  décalage et aller à l'état 29
+    NB   décalage et aller à l'état 30
+
+    test  aller à l'état 80
+
+
+État 63
+
+   34 test: test . EGALE EGALE test
+   35     | test . SUP test
+   36     | test . INF test
+   36     | test INF test .
+   37     | test . SUP EGALE test
+   38     | test . INF EGALE test
+
+    $défaut  réduction par utilisation de la règle 36 (test)
+
+
+État 64
+
+   37 test: test SUP EGALE . test
+
+    NOM  décalage et aller à l'état 29
+    NB   décalage et aller à l'état 30
+
+    test  aller à l'état 81
+
+
+État 65
+
+   34 test: test . EGALE EGALE test
+   35     | test . SUP test
+   35     | test SUP test .
+   36     | test . INF test
+   37     | test . SUP EGALE test
+   38     | test . INF EGALE test
+
+    $défaut  réduction par utilisation de la règle 35 (test)
+
+
+État 66
+
+   41 while: WHILE @3 OP test CP . $@4 body
+
+    $défaut  réduction par utilisation de la règle 40 ($@4)
+
+    $@4  aller à l'état 82
+
+
+État 67
+
+   24 body_printf: QUOTE INT_PRINTF QUOTE . VIR NB
+
+    VIR  décalage et aller à l'état 83
+
+
+État 68
+
+   23 body_printf: QUOTE STR QUOTE .
+
+    $défaut  réduction par utilisation de la règle 23 (body_printf)
+
+
+État 69
+
+   22 printf: PRINTF OP body_printf CP PV .
+
+    $défaut  réduction par utilisation de la règle 22 (printf)
+
+
+État 70
+
+   11 declaration: INT NOM EGALE expression PV .
+
+    $défaut  réduction par utilisation de la règle 11 (declaration)
+
+
+État 71
+
+   13 decSuite: NOM PV .
+
+    $défaut  réduction par utilisation de la règle 13 (decSuite)
+
+
+État 72
+
+   12 decSuite: NOM VIR . decSuite
+
+    NOM  décalage et aller à l'état 52
+
+    decSuite  aller à l'état 84
+
+
+État 73
+
+   21 expression: OP expression CP .
+
+    $défaut  réduction par utilisation de la règle 21 (expression)
+
+
+État 74
+
+   15 expression: expression . PLUS expression
+   15           | expression PLUS expression .
+   16           | expression . MOINS expression
+   17           | expression . MUL expression
+   18           | expression . DIV expression
+
+    MUL  décalage et aller à l'état 57
+    DIV  décalage et aller à l'état 58
+
+    $défaut  réduction par utilisation de la règle 15 (expression)
+
+
+État 75
+
+   15 expression: expression . PLUS expression
+   16           | expression . MOINS expression
+   16           | expression MOINS expression .
+   17           | expression . MUL expression
+   18           | expression . DIV expression
+
+    MUL  décalage et aller à l'état 57
+    DIV  décalage et aller à l'état 58
+
+    $défaut  réduction par utilisation de la règle 16 (expression)
+
+
+État 76
+
+   15 expression: expression . PLUS expression
+   16           | expression . MOINS expression
+   17           | expression . MUL expression
+   17           | expression MUL expression .
+   18           | expression . DIV expression
+
+    $défaut  réduction par utilisation de la règle 17 (expression)
+
+
+État 77
+
+   15 expression: expression . PLUS expression
+   16           | expression . MOINS expression
+   17           | expression . MUL expression
+   18           | expression . DIV expression
+   18           | expression DIV expression .
+
+    $défaut  réduction par utilisation de la règle 18 (expression)
+
+
+État 78
+
+   34 test: test . EGALE EGALE test
+   34     | test EGALE EGALE test .
+   35     | test . SUP test
+   36     | test . INF test
+   37     | test . SUP EGALE test
+   38     | test . INF EGALE test
+
+    $défaut  réduction par utilisation de la règle 34 (test)
+
+
+État 79
+
+   29 ifElse: IF OP test CP ifAction body .
+   31       | IF OP test CP ifAction body . ELSE $@2 body
+
+    ELSE  décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 29 (ifElse)
+
+
+État 80
+
+   34 test: test . EGALE EGALE test
+   35     | test . SUP test
+   36     | test . INF test
+   37     | test . SUP EGALE test
+   38     | test . INF EGALE test
+   38     | test INF EGALE test .
+
+    $défaut  réduction par utilisation de la règle 38 (test)
+
+
+État 81
+
+   34 test: test . EGALE EGALE test
+   35     | test . SUP test
+   36     | test . INF test
+   37     | test . SUP EGALE test
+   37     | test SUP EGALE test .
+   38     | test . INF EGALE test
+
+    $défaut  réduction par utilisation de la règle 37 (test)
+
+
+État 82
+
+   41 while: WHILE @3 OP test CP $@4 . body
+
+    OA  décalage et aller à l'état 7
+
+    body  aller à l'état 86
+
+
+État 83
+
+   24 body_printf: QUOTE INT_PRINTF QUOTE VIR . NB
+
+    NB  décalage et aller à l'état 87
+
+
+État 84
+
+   12 decSuite: NOM VIR decSuite .
+
+    $défaut  réduction par utilisation de la règle 12 (decSuite)
+
+
+État 85
+
+   31 ifElse: IF OP test CP ifAction body ELSE . $@2 body
+
+    $défaut  réduction par utilisation de la règle 30 ($@2)
+
+    $@2  aller à l'état 88
+
+
+État 86
+
+   41 while: WHILE @3 OP test CP $@4 body .
+
+    $défaut  réduction par utilisation de la règle 41 (while)
+
+
+État 87
+
+   24 body_printf: QUOTE INT_PRINTF QUOTE VIR NB .
+
+    $défaut  réduction par utilisation de la règle 24 (body_printf)
+
+
+État 88
+
+   31 ifElse: IF OP test CP ifAction body ELSE $@2 . body
+
+    OA  décalage et aller à l'état 7
+
+    body  aller à l'état 89
+
+
+État 89
+
+   31 ifElse: IF OP test CP ifAction body ELSE $@2 body .
+
+    $défaut  réduction par utilisation de la règle 31 (ifElse)
