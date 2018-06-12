@@ -362,13 +362,13 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[71] =
     {   0,
-        0,    0,   31,   30,   29,   23,   30,   21,   22,   16,
-       14,   27,   15,   17,   28,    4,   19,   18,   20,   13,
-       13,   13,   13,   13,   13,   13,   13,   13,    7,    8,
-       24,   26,   25,   28,    0,   13,   13,   13,   13,    1,
-       13,   13,   13,   13,   13,   13,    0,   28,   13,   13,
-       12,   13,   13,   13,   13,   13,   13,    3,    6,   13,
-       13,   10,   13,    9,   13,   13,    2,    5,   11,    0
+        0,    0,   31,   30,   29,   22,   30,   20,   21,   15,
+       13,   26,   14,   16,   27,    4,   18,   17,   19,   28,
+       28,   28,   28,   28,   28,   28,   28,   28,    7,    8,
+       23,   25,   24,   27,    0,   28,   28,   28,   28,    1,
+       28,   28,   28,   28,   28,   28,    0,   27,   28,   28,
+       12,   28,   28,   28,   28,   28,   28,    3,    6,   28,
+       28,   10,   28,    9,   28,   28,    2,    5,   11,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -852,92 +852,92 @@ YY_RULE_SETUP
 case 13:
 YY_RULE_SETUP
 #line 24 "compiler.l"
-{ yylval.str = strdup(yytext) ; return NOM;}
+{return PLUS;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 25 "compiler.l"
-{return PLUS;}
+{return MOINS;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 26 "compiler.l"
-{return MOINS;}
+{return MUL;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 27 "compiler.l"
-{return MUL;}
+{return DIV;}	
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 28 "compiler.l"
-{return DIV;}	
+{return EGALE;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 29 "compiler.l"
-{return EGALE;}
+{return INF;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 30 "compiler.l"
-{return INF;}
+{return SUP;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 31 "compiler.l"
-{return SUP;}
+{return OP;}	
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 32 "compiler.l"
-{return OP;}	
+{return CP;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 33 "compiler.l"
-{return CP;}
+{return QUOTE;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 35 "compiler.l"
-{return QUOTE;}
+#line 34 "compiler.l"
+{return INT_PRINTF;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 36 "compiler.l"
-{return INT_PRINTF;}
+#line 35 "compiler.l"
+{return STRING_PRINTF;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 37 "compiler.l"
-{return STRING_PRINTF;}
+#line 36 "compiler.l"
+{return FLOAT_PRINTF;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 38 "compiler.l"
-{return FLOAT_PRINTF;}
+#line 37 "compiler.l"
+{return VIR;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 39 "compiler.l"
-{return VIR;}
+#line 38 "compiler.l"
+{yylval.nb = atoi(yytext); return NB;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 40 "compiler.l"
-{yylval.nb = atoi(yytext); return NB;}
+#line 39 "compiler.l"
+{ yylval.str = strdup(yytext) ; return NOM;}
 	YY_BREAK
 case 29:
 /* rule 29 can match eol */
 YY_RULE_SETUP
-#line 41 "compiler.l"
+#line 40 "compiler.l"
 
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 42 "compiler.l"
+#line 41 "compiler.l"
 ECHO;
 	YY_BREAK
 #line 943 "lex.yy.c"
@@ -1945,7 +1945,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 42 "compiler.l"
+#line 41 "compiler.l"
 
 
 

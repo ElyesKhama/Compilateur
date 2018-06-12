@@ -7,8 +7,6 @@
 	#include "table.c"
 	int portee = 1;
 	#define lignemax 150
- 
-
 
 	struct {
 		char *o;
@@ -25,10 +23,10 @@
 	char* str; 
 }
 
-%token IF WHILE ELSE PRINTF MAIN OA CA CONST INT NOM PLUS MOINS MUL DIV EGALE OP CP LIGN PV QUOTE INT_PRINTF STRING_PRINTF FLOAT_PRINTF VIR NB STR INF SUP VOID RETURN
+%token IF WHILE ELSE PRINTF MAIN OA CA CONST INT NOM PLUS MOINS MUL DIV EGALE OP CP LIGN PV QUOTE INT_PRINTF STRING_PRINTF FLOAT_PRINTF VIR NB INF SUP VOID RETURN
+
 %left PLUS MOINS
 %left MUL DIV
-
 %left EGALE SUP INF
 
 %type <str>	INT NOM MAIN VOID
@@ -43,6 +41,8 @@
 
 main: INT MAIN OP CP body 					{pile_push($2,$1,portee); pile_print(); printf("\n");} ;
 
+body : OA { portee++; } body_main CA { pop_portee(portee); portee--; } ;
+
 body_main :	instruction body_main
 			|/*empty*/
 
@@ -54,14 +54,36 @@ instruction :declaration
  
 declaration : INT NOM PV							{ pile_push($2,$1,portee); pile_print(); printf("\n");}
 			| INT NOM VIR decSuite  				{ pile_push($2,$1,portee); pile_print(); printf("\n");}
-			| INT NOM EGALE expression PV			 {pile_print();}
+			| INT NOM EGALE expression PV			{pile_pop();
+													pile_push($2,$1,portee); 
+													pile_print(); printf("\n"); 
+													tab_asm[indice].o = "LOAD";
+													tab_asm[indice].a = 0; 
+													tab_asm[indice].b = pile_last();
+													tab_asm[indice].c = -1; 
+													indice++;
+													tab_asm[indice].o = "STORE" ;  
+													tab_asm[indice].a = pile_last();  
+													tab_asm[indice].b = 0;
+													tab_asm[indice].c = -1; 
+													indice++;}
 			;
 
 decSuite : NOM VIR decSuite {pile_push($1,"int",portee); pile_print(); printf("\n");}
 		| NOM PV 			{pile_push($1,"int",portee); pile_print(); printf("\n");} 
 		;
 
-affectation : NOM EGALE expression PV  				
+affectation : NOM EGALE expression PV  				{tab_asm[indice].o = "LOAD"; 
+													tab_asm[indice].a = 0;
+													tab_asm[indice].b = pile_last();
+													tab_asm[indice].c = -1; 
+													indice++;
+													pile_pop();
+													tab_asm[indice].o = "STORE" ; 
+													tab_asm[indice].a = get_addr($1);  
+													tab_asm[indice].b = 0;
+													tab_asm[indice].c = -1; 
+													indice++;} ;
 
 expression  : expression PLUS expression  	{tab_asm[indice].o = "LOAD";
 											tab_asm[indice].a = 0;
@@ -74,11 +96,13 @@ expression  : expression PLUS expression  	{tab_asm[indice].o = "LOAD";
 											tab_asm[indice].b = pile_last();
 											tab_asm[indice].c = -1; 
 											indice++;
+											pile_pop();
 											tab_asm[indice].o = "ADD";
 											tab_asm[indice].a = 0;
 											tab_asm[indice].b = 0;
 											tab_asm[indice].c = 1;
 											indice++;
+											pile_push("tmp","int",portee); 
 											tab_asm[indice].o = "STORE";
 											tab_asm[indice].a = pile_last();
 											tab_asm[indice].b = 0;
@@ -95,16 +119,18 @@ expression  : expression PLUS expression  	{tab_asm[indice].o = "LOAD";
 											tab_asm[indice].b = pile_last();
 											tab_asm[indice].c = -1; 
 											indice++;
+											pile_pop();
 											tab_asm[indice].o = "SOU";
 											tab_asm[indice].a = 0;
 											tab_asm[indice].b = 0;
 											tab_asm[indice].c = 1;
 											indice++;
+											pile_push("tmp","int",portee); 
 											tab_asm[indice].o = "STORE";	
 											tab_asm[indice].a = pile_last();
 											tab_asm[indice].b = 0;
 											tab_asm[indice].c = -1; 
-											indice++; };
+											indice++;};
 			| expression MUL expression  	{tab_asm[indice].o = "LOAD";
 											tab_asm[indice].a = 0;
 											tab_asm[indice].b = pile_last();
@@ -116,37 +142,41 @@ expression  : expression PLUS expression  	{tab_asm[indice].o = "LOAD";
 											tab_asm[indice].b = pile_last();
 											tab_asm[indice].c = -1; 
 											indice++;
+											pile_pop();
 											tab_asm[indice].o = "MUL";
 											tab_asm[indice].a = 0;
 											tab_asm[indice].b = 0;
 											tab_asm[indice].c = 1;
 											indice++;
+											pile_push("tmp","int",portee); 
 											tab_asm[indice].o = "STORE";
 											tab_asm[indice].a = pile_last();
 											tab_asm[indice].b = 0;
 											tab_asm[indice].c = -1; 											
-											indice++; };		
+											indice++;};		
 			| expression DIV expression  	{tab_asm[indice].o = "LOAD";
 											tab_asm[indice].a = 0;
 											tab_asm[indice].b = pile_last();
+											tab_asm[indice].c = -1;
 											indice++;
-											tab_asm[indice].c = -1; 
 											pile_pop();
 											tab_asm[indice].o = "LOAD";
 											tab_asm[indice].a = 1;
 											tab_asm[indice].b = pile_last();
 											tab_asm[indice].c = -1; 
 											indice++;
+											pile_pop();
 											tab_asm[indice].o = "DIV";
 											tab_asm[indice].a = 0;
 											tab_asm[indice].b = 0;
 											tab_asm[indice].c = 1;
 											indice++;
+											pile_push("tmp","int",portee); 
 											tab_asm[indice].o = "STORE";;
 											tab_asm[indice].a = pile_last();
 											tab_asm[indice].b = 0;	
 											tab_asm[indice].c = -1; 									
-											indice++; };		
+											indice++;};		
 			| NOM					{pile_push("tmp","string",portee);
 									pile_print(); printf("\n"); 
 									tab_asm[indice].o = "LOAD";
@@ -174,15 +204,12 @@ expression  : expression PLUS expression  	{tab_asm[indice].o = "LOAD";
 			| OP expression CP
 			;
 
+printf: PRINTF OP body_printf CP PV
+	;
 
-printf: PRINTF OP body_printf CP PV	  {printf("printf \n");} ;
-
-body_printf	: QUOTE STR QUOTE				
-			| QUOTE INT_PRINTF QUOTE VIR NB
-			| NOM 
+body_printf	: QUOTE NOM QUOTE 						{printf("print de %s\n",$2);};	
+			| QUOTE NOM INT_PRINTF QUOTE VIR NOM	{printf("print de %s\n",$6);};	
 			;
-
-body : OA { portee++; } body_main CA { pop_portee(portee); portee--; } ;
 
 ifAction :
 	{	tab_asm[indice].o="LOAD";
@@ -201,11 +228,10 @@ ifAction :
 
 ifElse :IF OP test CP ifAction body
 			{	tab_asm[$<nb>5].a= indice;
-				printf("if");
 			}
 			%prec IFREDUCE	
 		| IF OP test CP ifAction body ELSE
-			{	tab_asm[$<nb>5].a= indice+1;
+			{	tab_asm[$<nb>5].a= indice;
 				tab_asm[indice].o = "JMP";
 				tab_asm[indice].a = -2;
 				tab_asm[indice].b = -1;
@@ -221,7 +247,7 @@ test	: NOM 					 	{pile_push("tmp","string",portee);
 									tab_asm[indice].a = 0;
 									tab_asm[indice].b = get_addr($1);
 									tab_asm[indice].c = -1; 
-									indice++;;
+									indice++;
 									tab_asm[indice].o = "STORE";
 									tab_asm[indice].a = pile_last();
 									tab_asm[indice].b = 0;
@@ -244,17 +270,24 @@ test	: NOM 					 	{pile_push("tmp","string",portee);
 										tab_asm[indice].b = pile_last();
 										tab_asm[indice].c= -1;
 										indice++;
+										pile_pop();
 										tab_asm[indice].o="LOAD";
 										tab_asm[indice].a = 1;
 										tab_asm[indice].b = pile_last();
 										tab_asm[indice].c= -1;
-										indice++;					
+										indice++;
+										pile_pop();				
 										tab_asm[indice].o="EQU";
 										tab_asm[indice].a = 4;
 										tab_asm[indice].b = 0;
 										tab_asm[indice].c= 1;
 										indice++;
-										pile_push("tmp","int",portee); 
+										pile_push("tmp","int",portee);
+										tab_asm[indice].o = "STORE";
+										tab_asm[indice].a = pile_last();
+										tab_asm[indice].b = 4;
+										tab_asm[indice].c = -1; 
+										indice++;
 										pile_print(); printf("\n");}
 		| test SUP test					{tab_asm[indice].o="LOAD";
 										tab_asm[indice].a = 0;
@@ -274,6 +307,11 @@ test	: NOM 					 	{pile_push("tmp","string",portee);
 										tab_asm[indice].c= 1;
 										indice++;
 										pile_push("tmp","int",portee); 
+										tab_asm[indice].o = "STORE";
+										tab_asm[indice].a = pile_last();
+										tab_asm[indice].b = 4;
+										tab_asm[indice].c = -1; 
+										indice++;
 										pile_print(); printf("\n");}
 		| test INF test					{tab_asm[indice].o="LOAD";
 										tab_asm[indice].a = 0;
@@ -292,7 +330,12 @@ test	: NOM 					 	{pile_push("tmp","string",portee);
 										tab_asm[indice].b = 0;
 										tab_asm[indice].c= 1;
 										indice++;
-										pile_push("tmp","int",portee); 
+										pile_push("tmp","int",portee);
+										tab_asm[indice].o = "STORE";
+										tab_asm[indice].a = pile_last();
+										tab_asm[indice].b = 4;
+										tab_asm[indice].c = -1; 
+										indice++;
 										pile_print(); printf("\n");}
 		| test SUP EGALE test			{tab_asm[indice].o="LOAD";
 										tab_asm[indice].a = 0;
@@ -310,7 +353,14 @@ test	: NOM 					 	{pile_push("tmp","string",portee);
 										tab_asm[indice].a = 4;
 										tab_asm[indice].b = 0;
 										tab_asm[indice].c= 1;
-										indice++;}
+										indice++;
+										pile_push("tmp","int",portee);
+										tab_asm[indice].o = "STORE";
+										tab_asm[indice].a = pile_last();
+										tab_asm[indice].b = 4;
+										tab_asm[indice].c = -1; 
+										indice++;
+										pile_print(); printf("\n");}
 		| test INF EGALE test			{tab_asm[indice].o="LOAD";
 										tab_asm[indice].a = 0;
 										tab_asm[indice].b = pile_last();
@@ -328,7 +378,12 @@ test	: NOM 					 	{pile_push("tmp","string",portee);
 										tab_asm[indice].b = 0;
 										tab_asm[indice].c= 1;
 										indice++;
-										pile_push("tmp","int",portee); 
+										pile_push("tmp","int",portee);
+										tab_asm[indice].o = "STORE";
+										tab_asm[indice].a = pile_last();
+										tab_asm[indice].b = 4;
+										tab_asm[indice].c = -1; 
+										indice++;
 										pile_print(); printf("\n");}
 		;
 
@@ -352,38 +407,39 @@ while	: 	WHILE	{$<nb>1=indice;}
 						tab_asm[indice].c = -1;
 						indice++;		
 						printf("while \n");
-						tab_asm[$<nb>2].a= indice;} ; // ACTUALISE LE JMPC
+						tab_asm[$<nb>2].a= indice-1;} ;
  
 %%
 
 int main() {
-	
-	//FILE* fichier = NULL;
 	yyparse();
-	/*fichier = fopen("./asm.txt","w");
+	FILE* fichier = NULL;
+
+	fichier = fopen("./../interpreteur/instruction.asm","w");
 	if (fichier != NULL){
-		fprintf(fichier,"test");
-		//printf("<<<<<");
-	fclose(fichier);
-	}*/
-
-
-	for(int i=0; i<150; i++)
-	{
-		if(tab_asm[i].o != NULL){
-		printf("%d\t%s\t%d\t",i,tab_asm[i].o,tab_asm[i].a);
-		if(tab_asm[i].b != -1){
-		printf("%d\t",tab_asm[i].b);		
-		}
-		if(tab_asm[i].c != -1){
-		printf("%d",tab_asm[i].c);		
-		}
-		else
+		for(int i=0; i<indice; i++)
 		{
-		printf("-");
+			fprintf(fichier,"%s ",tab_asm[i].o);
+			printf("%d\t%s\t",i,tab_asm[i].o);
+			if(tab_asm[i].a != -1){
+				fprintf(fichier,"%d ",tab_asm[i].a);
+				printf("%d\t",tab_asm[i].a);
+			}
+			if(tab_asm[i].b != -1){
+				fprintf(fichier,"%d ",tab_asm[i].b);
+				printf("%d\t",tab_asm[i].b);
+			}	
+			if(tab_asm[i].c != -1){
+				fprintf(fichier,"%d",tab_asm[i].c);
+				printf("%d",tab_asm[i].c);
+			}
+			else
+				printf("-");
+			fprintf(fichier,"\n");
+			printf("\n");
+		
 		}
 		printf("\n");
-		}
+		fclose(fichier);
 	}
-	printf("\n");
 }

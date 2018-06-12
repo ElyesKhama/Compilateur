@@ -70,12 +70,11 @@ extern int yydebug;
     FLOAT_PRINTF = 280,
     VIR = 281,
     NB = 282,
-    STR = 283,
-    INF = 284,
-    SUP = 285,
-    VOID = 286,
-    RETURN = 287,
-    IFREDUCE = 288
+    INF = 283,
+    SUP = 284,
+    VOID = 285,
+    RETURN = 286,
+    IFREDUCE = 287
   };
 #endif
 
@@ -84,12 +83,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 23 "compiler.y" /* yacc.c:1909  */
+#line 21 "compiler.y" /* yacc.c:1909  */
 
 	int nb;
 	char* str; 
 
-#line 93 "compiler.tab.h" /* yacc.c:1909  */
+#line 92 "compiler.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

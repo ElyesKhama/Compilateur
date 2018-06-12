@@ -21,7 +21,6 @@ Chiffre [0-9]
 "void" 						{ yylval.str = strdup(yytext); return VOID;}
 "return"					{ yylval.str = strdup(yytext); return RETURN;}
 "int"						{ yylval.str = strdup(yytext); return INT;}
-{Lettre}+[a-zA-Z0-9\_]* 	{ yylval.str = strdup(yytext) ; return NOM;}
 "+" 						{return PLUS;}
 "-"							{return MOINS;}
 "*"							{return MUL;}
@@ -31,13 +30,13 @@ Chiffre [0-9]
 ">"							{return SUP;}
 "("							{return OP;}	
 ")"						    {return CP;}
-
-"\""						{return QUOTE;}
+"\"" 						{return QUOTE;}
 "%d"                        {return INT_PRINTF;}
 "%s"  						{return STRING_PRINTF;}
 "%f"						{return FLOAT_PRINTF;}
 ","							{return VIR;}
 [0-9]+(e-?[0-9]+)?			{yylval.nb = atoi(yytext); return NB;}
+{Lettre}+[a-zA-Z0-9\_]* 	{ yylval.str = strdup(yytext) ; return NOM;}
 [ \t\n]
 %%
 

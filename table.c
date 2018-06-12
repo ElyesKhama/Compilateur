@@ -67,12 +67,14 @@ void pop_portee(int nb) {
 }
 
 void pile_print(void) {
+	printf("Tables des symboles :\n");
 	Pile * current = pile;  // Initialize current
  	while (current != NULL)
     {
 		printf("@%2ld nom: %4s type: %s portee: %d \n", current->addr, current->nom, current->type, current->portee);
 		current = current->precedent;
     }
+	printf("\n");
 }
 
 long pile_last(void){
